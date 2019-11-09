@@ -104,3 +104,47 @@ function displayLowInv() {
         }
     )
 }
+
+function addInventory() {
+    connection.query(
+        "SELECT item_id, product_name " +
+        "FROM products ",
+        (err, res) => {
+            if (err) throw err;
+            let itemList = [];
+            console.log(res[0].item_id);
+            console.log(res[0].product_name);
+            res.forEach(record => {
+                itemList.push(record.product_name);
+            })
+            console.log(itemList);
+            inquirer.prompt({
+                type: "list",
+                name: "itemChoice",
+                message: "\nWhich item would you like to add inventory to?",
+                choices: itemList
+            }).then(itemAnswer => {
+                inquirer.prompt({
+                    type: "input",
+                    name: "itemAmt",
+                    message: "\nHow much inventory would you like to add?"
+                }).then(amtAnswer => {
+                    connection.query(
+                        "UPDATE products " + 
+                        "SET stock_quantity=((SELECT stock_quantity " + 
+                        "FROM products " +
+                        "WHERE product_name=?) + " + 
+                        "?) " + 
+                        "WHERE product_name=?",
+                        [itemAnswer.itemChoice, amtAnswer.itemAmt, itemAnswer.itemChoice],
+                        (err) => {
+                            if (err) throw err;
+                            console.log("\nInventory successfully updated.");
+                            listMenu();
+                        }
+                    )
+                })
+            })
+        }
+    )
+}
