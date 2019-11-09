@@ -27,11 +27,16 @@ INSERT INTO products (product_name, department_id, price, stock_quantity) VALUES
 ("Totoro Hat", 1, 34.99, 10),
 ("Triceratops Shoes", 2, 44.99, 60),
 ("Charizard Shoes", 2, 49.99, 35),
-("Ponyo Shoes", 2, 39.99, 20);
+("Ponyo Shoes", 2, 39.99, 20),
+("Stego Mask", 3, 15.99, 45),
+("Slowpoke Mask", 3, 12.95, 22),
+("Gandalf Mask", 3, 19.99, 34),
+("Radagast Mask", 3, 28.95, 9);
 
 INSERT INTO departments (department) VALUES
 ("Hats"),
-("Shoes");
+("Shoes"),
+("Masks");
 
 SELECT * FROM products;
 SELECT * FROM departments;
