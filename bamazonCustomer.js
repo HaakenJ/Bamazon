@@ -3,11 +3,11 @@ const inquirer = require("inquirer");
 const Table = require("cli-table");
 
 const connection = mysql.createConnection({
-  host: "localhost",
-  port: 3306,
-  user: "root",
-  password: "kramer",
-  database: "bamazon"
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "kramer",
+    database: "bamazon"
 })
 
 connection.connect(err => {
@@ -106,23 +106,6 @@ function showCost(item_id, buyAmt) {
             if (err) throw err;
             let total = res[0].price * buyAmt;
             console.log(`\nThe total cost of your purchse is ${total}.`);
-            if (res[0].stock_quantity === 0) {
-                removeItem(item_id);
-            } else {
-                anotherPurchase();
-            }
-        }
-    )
-}
-
-function removeItem(item_id) {
-    connection.query(
-        "DELETE FROM products " + 
-        "WHERE item_id=?",
-        [item_id],
-        (err) => {
-            if (err) throw err;
-            console.log("\nLooks like you bought the last one!")
             anotherPurchase();
         }
     )
@@ -133,8 +116,8 @@ function anotherPurchase() {
         type: "confirm",
         name: "answer",
         message: "\nWould you like to make another purchase?"
-    }).then(res => {
-        if (res.answer) {
+    }).then(answer => {
+        if (answer.answer) {
             displayItems();
         } else {
             console.log("\nPlease come again!");
