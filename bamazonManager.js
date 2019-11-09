@@ -131,12 +131,9 @@ function addInventory() {
                 }).then(amtAnswer => {
                     connection.query(
                         "UPDATE products " + 
-                        "SET stock_quantity=((SELECT stock_quantity " + 
-                        "FROM products " +
-                        "WHERE product_name=?) + " + 
-                        "?) " + 
+                        "SET stock_quantity=stock_quantity + ? " + 
                         "WHERE product_name=?",
-                        [itemAnswer.itemChoice, amtAnswer.itemAmt, itemAnswer.itemChoice],
+                        [amtAnswer.itemAmt, itemAnswer.itemChoice],
                         (err) => {
                             if (err) throw err;
                             console.log("\nInventory successfully updated.");
