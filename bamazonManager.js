@@ -23,11 +23,56 @@ function listMenu() {
         type: "list",
         name: "menuChoice",
         message: "\nWhat would you like to do?",
-        choices: ["View products for sale",
-                    "View low inventory",
-                    "Add to inventory",
-                    "Add new product"]
+        choices: ["View Products for Sale",
+            "View Low Inventory",
+            "Add to Inventory",
+            "Add New Product",
+            "Exit"
+        ]
     }).then(answer => {
-
+        switch (answer.menuChoice) {
+            case "View Products for Sale":
+                displayProducts();
+                break;
+            case "View Low Inventory":
+                displayLowInv();
+                break;
+            case "Add to Inventory":
+                addInventory();
+                break;
+            case "Add New Product":
+                addNewProd();
+                break;
+            default:
+                console.log("\nWe appreciate your continuing service!");
+                connection.end();
+        }
     })
+}
+
+function displayProducts() {
+    connection.query(
+        "SELECT item_id, product_name, price, stock_quantity " +
+        "FROM products",
+        (err, res) => {
+            if (err) throw err;
+            let table = new Table({
+                head: ["ID", "Name", "Price", "Quantity"],
+                colWidths: [10, 30, 10, 10]
+            });
+            res.forEach(record => {
+                let currentItem = [record.item_id,
+                    record.product_name,
+                    record.price,
+                    record.stock_quantity
+                ];
+                table.push(currentItem);
+            })
+            console.log(`\n------------------------------------------------------\n`);
+            console.log("\n                Available Products")
+            console.log(table.toString());
+            console.log(`\n------------------------------------------------------\n`);
+            listMenu();
+        }
+    )
 }

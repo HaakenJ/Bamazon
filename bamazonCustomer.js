@@ -19,21 +19,23 @@ connection.connect(err => {
 })
 
 function displayItems() {
-    const queryStr = "SELECT item_id, product_name, price " + 
-    "FROM products ";
-    let table = new Table ({
+    let table = new Table({
         head: ["Item ID",
-                "Product Name",
-                "Price"],
-              colWidths: [10, 30, 10]
+            "Product Name",
+            "Price"
+        ],
+        colWidths: [10, 30, 10]
     });
-    connection.query(queryStr,
+    connection.query(
+        "SELECT item_id, product_name, price " +
+        "FROM products",
         (err, res) => {
             if (err) throw err;
-            res.forEach(result => {
-                let currentItem = [result.item_id,
-                                    result.product_name,
-                                    result.price];
+            res.forEach(record => {
+                let currentItem = [record.item_id,
+                    record.product_name,
+                    record.price
+                ];
                 table.push(currentItem);
             });
             console.log(`\n------------------------------------------------------\n`);
@@ -47,15 +49,16 @@ function displayItems() {
 
 function buyitem() {
     inquirer.prompt([{
-        type: "input",
-        name: "buyId",
-        message: "What is the ID of the product you wish to purchase?"
-    },
-    {
-        type: "input",
-        name: "buyAmt",
-        message: "\nHow many would you like to buy?"
-    }]).then(answer => {
+            type: "input",
+            name: "buyId",
+            message: "What is the ID of the product you wish to purchase?"
+        },
+        {
+            type: "input",
+            name: "buyAmt",
+            message: "\nHow many would you like to buy?"
+        }
+    ]).then(answer => {
         console.log(`\n======================================================\n`);
         checkQuantity(answer.buyId, answer.buyAmt);
     })
@@ -70,8 +73,8 @@ function checkQuantity(item_id, buyAmt) {
         (err, res) => {
             if (err) throw err;
             if (res[0].stock_quantity < buyAmt) {
-                console.log("\nSorry, we have an insufficient " + 
-                "quantity to meet your request.")
+                console.log("\nSorry, we have an insufficient " +
+                    "quantity to meet your request.")
                 anotherPurchase();
             } else {
                 updateQuantity(item_id, res[0].stock_quantity, buyAmt);
