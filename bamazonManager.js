@@ -76,3 +76,31 @@ function displayProducts() {
         }
     )
 }
+
+function displayLowInv() {
+    connection.query(
+        "SELECT item_id, product_name, price, stock_quantity " +
+        "FROM products " + 
+        "WHERE stock_quantity < 10",
+        (err, res) => {
+            if (err) throw err;
+            let table = new Table({
+                head: ["ID", "Name", "Price", "Quantity"],
+                colWidths: [10, 30, 10, 10]
+            });
+            res.forEach(record => {
+                let currentItem = [record.item_id,
+                    record.product_name,
+                    record.price,
+                    record.stock_quantity
+                ];
+                table.push(currentItem);
+            })
+            console.log(`\n------------------------------------------------------\n`);
+            console.log("\n                  Low Inventory")
+            console.log(table.toString());
+            console.log(`\n------------------------------------------------------\n`);
+            listMenu();
+        }
+    )
+}
