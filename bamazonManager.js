@@ -145,3 +145,39 @@ function addInventory() {
         }
     )
 }
+
+function addNewProd() {
+    inquirer.prompt([{
+        type: "input",
+        name: "newName",
+        message: "\nWhat is the name of the product you would like to add?"
+    },
+    {
+        type: "list",
+        name: "newDept",
+        message: "\nWhat department would you like to add this product into?",
+        choices: ["Hats", "Masks", "Shoes"]
+    },
+    {
+        type: "input",
+        name: "newPrice",
+        message: "\nWhat is the price of the new item?"
+    },
+    {
+        type: "input",
+        name: "newQuan",
+        message: "\nWhat is the inital quantity of this item?"
+    }]).then(answer => {
+        connection.query(
+            "INSERT INTO products " + 
+            "(product_name, department, price, stock_quantity) " + 
+            "VALUES (?, ?, ?, ?)",
+            [answer.newName, answer.newDept, answer.newPrice, answer.newQuan],
+            (err) => {
+                if (err) throw err;
+                console.log("\nItem successfully added to database.");
+                listMenu();
+            }
+        )
+    })
+}
