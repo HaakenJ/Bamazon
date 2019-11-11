@@ -38,5 +38,10 @@ INSERT INTO products (product_name, department, price, stock_quantity, product_s
 ("Gandalf Mask", "Masks", 19.99, 34, 0),
 ("Radagast Mask", "Masks", 28.95, 9, 0);
 
+INSERT INTO departments (department_name, over_head_costs) VALUES 
+("Hats", 2500),
+("Shoes", 3200),
+("Masks", 2200);
+
 SELECT * FROM products;
 SELECT * FROM departments;
