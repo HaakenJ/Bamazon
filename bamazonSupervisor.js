@@ -22,12 +22,14 @@ function listOptions() {
         type: "list",
         name: "optionChoice",
         message: "\nWhat would you like to do?",
-        choices: ["View Product Sales by Department", "Create New Department"]
+        choices: ["View Product Sales by Department", "Create New Department", "Exit"]
     }).then(answer => {
         if (answer.optionChoice === "View Product Sales by Department") {
             displayProducts();
-        } else {
+        } else if (answer.optionChoice === "Create New Department") {
             createDepartment();
+        } else {
+            connection.end();
         }
     })
 }
@@ -37,7 +39,7 @@ function displayProducts() {
         "SELECT " + 
         "d.department_id AS id, p.department AS name, d.over_head_costs AS costs, " + 
         "SUM(p.product_sales) AS sales, " + 
-        "(p.product_sales - d.over_head_costs) AS profit " + 
+        "(SUM(p.product_sales) - d.over_head_costs) AS profit " + 
         "FROM products p " + 
         "INNER JOIN departments d " +
         "ON d.department_name = p.department " +
@@ -46,7 +48,7 @@ function displayProducts() {
             if (err) throw err;
             let table = new Table({
                 head: ["Depart. ID", "Dept. Name", "OH Costs", "Total Sales", "Profit / Loss"],
-                colWidths: [15, 15, 15, 15, 15]
+                colWidths: [12, 15, 15, 15, 15]
             });
             res.forEach(record => {
                 let currentItem = [record.id,
@@ -58,9 +60,34 @@ function displayProducts() {
                 table.push(currentItem);
             })
             console.log(`\n------------------------------------------------------\n`);
-            console.log("\n                Departments")
+            console.log("\n                                Departments")
             console.log(table.toString());
             console.log(`\n------------------------------------------------------\n`);
+            listOptions();
         }
     )
+}
+
+function createDepartment() {
+    inquirer.prompt([{
+        type: "input",
+        name: "deptName",
+        message: "\nWhat is the name of the new department?"
+    },
+    {
+        type: "input",
+        name: "deptCosts",
+        message: "\nWhat are the monthly overhead costs for this department?"
+    }]).then(answer => {
+        connection.query(
+            "INSERT INTO departments (department_name, over_head_costs) " +
+            "VALUES (?, ?)",
+            [answer.deptName, answer.deptCosts],
+            (err) => {
+                if (err) throw err;
+                console.log("\nDepartment successfully added.")
+                listOptions();
+            }
+        )
+    })
 }

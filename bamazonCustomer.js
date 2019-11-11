@@ -107,10 +107,10 @@ function showCost(item_id, buyAmt) {
         (err, res) => {
             if (err) throw err;
             let total = res[0].price * buyAmt;
-            console.log(`\nThe total cost of your purchse is ${total}.`);
+            console.log(`\nThe total cost of your purchse is ${total.toFixed(2)}.`);
             connection.query(
                 "UPDATE products " + 
-                "SET product_sales=product_sales+?" + 
+                "SET product_sales=product_sales+? " + 
                 "WHERE item_id=?",
                 [total, item_id],
                 (err) => {

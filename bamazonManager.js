@@ -80,7 +80,7 @@ function displayProducts() {
 function displayLowInv() {
     connection.query(
         "SELECT item_id, product_name, stock_quantity " +
-        "FROM products " + 
+        "FROM products " +
         "WHERE stock_quantity < 10",
         (err, res) => {
             if (err) throw err;
@@ -126,8 +126,8 @@ function addInventory() {
                     message: "\nHow much inventory would you like to add?"
                 }).then(amtAnswer => {
                     connection.query(
-                        "UPDATE products " + 
-                        "SET stock_quantity=stock_quantity + ? " + 
+                        "UPDATE products " +
+                        "SET stock_quantity=stock_quantity + ? " +
                         "WHERE product_name=?",
                         [amtAnswer.itemAmt, itemAnswer.itemChoice],
                         (err) => {
@@ -143,37 +143,49 @@ function addInventory() {
 }
 
 function addNewProd() {
-    inquirer.prompt([{
-        type: "input",
-        name: "newName",
-        message: "\nWhat is the name of the product you would like to add?"
-    },
-    {
-        type: "list",
-        name: "newDept",
-        message: "\nWhat department would you like to add this product into?",
-        choices: ["Hats", "Masks", "Shoes"]
-    },
-    {
-        type: "input",
-        name: "newPrice",
-        message: "\nWhat is the price of the new item?"
-    },
-    {
-        type: "input",
-        name: "newQuan",
-        message: "\nWhat is the inital quantity of this item?"
-    }]).then(answer => {
-        connection.query(
-            "INSERT INTO products " + 
-            "(product_name, department, price, stock_quantity, product_sales) " + 
-            "VALUES (?, ?, ?, ?, ?)",
-            [answer.newName, answer.newDept, answer.newPrice, answer.newQuan, 0],
-            (err) => {
-                if (err) throw err;
-                console.log("\nItem successfully added to database.");
-                listMenu();
-            }
-        )
-    })
+    connection.query(
+        "SELECT department_name " +
+        "FROM departments ",
+        (err, res) => {
+            if (err) throw err;
+            let deptList = [];
+            res.forEach(record => {
+                deptList.push(record.department_name);
+            })
+            inquirer.prompt([{
+                    type: "input",
+                    name: "newName",
+                    message: "\nWhat is the name of the product you would like to add?"
+                },
+                {
+                    type: "list",
+                    name: "newDept",
+                    message: "\nWhat department would you like to add this product into?",
+                    choices: deptList
+                },
+                {
+                    type: "input",
+                    name: "newPrice",
+                    message: "\nWhat is the price of the new item?"
+                },
+                {
+                    type: "input",
+                    name: "newQuan",
+                    message: "\nWhat is the inital quantity of this item?"
+                }
+            ]).then(answer => {
+                connection.query(
+                    "INSERT INTO products " +
+                    "(product_name, department, price, stock_quantity, product_sales) " +
+                    "VALUES (?, ?, ?, ?, ?)",
+                    [answer.newName, answer.newDept, answer.newPrice, answer.newQuan, 0],
+                    (err) => {
+                        if (err) throw err;
+                        console.log("\nItem successfully added to database.");
+                        listMenu();
+                    }
+                )
+            })
+        }
+    )
 }

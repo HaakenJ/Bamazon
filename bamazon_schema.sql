@@ -45,3 +45,9 @@ INSERT INTO departments (department_name, over_head_costs) VALUES
 
 SELECT * FROM products;
 SELECT * FROM departments;
+
+SELECT d.department_id, p.department, d.over_head_costs, SUM(p.product_sales) AS Sales, (p.product_sales - d.over_head_costs) AS total_profit
+FROM products p
+INNER JOIN departments d 
+ON d.department_name = p.department
+GROUP BY p.department;
