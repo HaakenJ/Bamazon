@@ -77,19 +77,18 @@ function checkQuantity(item_id, buyAmt) {
                     "quantity to meet your request.")
                 anotherPurchase();
             } else {
-                updateQuantity(item_id, res[0].stock_quantity, buyAmt);
+                updateQuantity(item_id, buyAmt);
             }
         }
     )
 }
 
-function updateQuantity(item_id, oldAmt, buyAmt) {
-    let newQuantity = oldAmt - buyAmt;
+function updateQuantity(item_id, buyAmt) {
     connection.query(
         "UPDATE products " +
-        "SET stock_quantity=? " +
+        "SET stock_quantity=stock_quantity-? " +
         "WHERE item_id=?",
-        [newQuantity, item_id],
+        [buyAmt, item_id],
         (err) => {
             if (err) throw err;
             console.log("\nPurchase complete!");
@@ -109,7 +108,17 @@ function showCost(item_id, buyAmt) {
             if (err) throw err;
             let total = res[0].price * buyAmt;
             console.log(`\nThe total cost of your purchse is ${total}.`);
-            anotherPurchase();
+            connection.query(
+                "UPDATE products " + 
+                "SET product_sales=product_sales+?" + 
+                "WHERE item_id=?",
+                [total, item_id],
+                (err) => {
+                    if (err) throw err;
+                    console.log("Total sales updated.");
+                    anotherPurchase();
+                }
+            )
         }
     )
 }

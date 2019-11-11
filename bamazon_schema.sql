@@ -1,3 +1,5 @@
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'kramer';
+
 DROP DATABASE IF EXISTS bamazon;
 
 CREATE DATABASE bamazon;
@@ -12,7 +14,7 @@ CREATE TABLE products (
   department VARCHAR(80) NOT NULL,
   price DECIMAL (10, 2) NOT NULL,
   stock_quantity INT NOT NULL,
-  product_sales INT NOT NULL,
+  product_sales DECIMAL (10, 2) NOT NULL,
   PRIMARY KEY (item_id)
 );
 
