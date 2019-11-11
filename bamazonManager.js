@@ -52,19 +52,20 @@ function listMenu() {
 
 function displayProducts() {
     connection.query(
-        "SELECT item_id, product_name, price, stock_quantity " +
+        "SELECT item_id, product_name, price, stock_quantity, product_sales " +
         "FROM products",
         (err, res) => {
             if (err) throw err;
             let table = new Table({
-                head: ["ID", "Name", "Price", "Quantity"],
-                colWidths: [10, 30, 10, 10]
+                head: ["ID", "Name", "Price", "Quantity", "Total Sales"],
+                colWidths: [10, 30, 10, 10, 10]
             });
             res.forEach(record => {
                 let currentItem = [record.item_id,
                     record.product_name,
                     record.price,
-                    record.stock_quantity
+                    record.stock_quantity,
+                    record.product_sales
                 ];
                 table.push(currentItem);
             })
@@ -79,19 +80,18 @@ function displayProducts() {
 
 function displayLowInv() {
     connection.query(
-        "SELECT item_id, product_name, price, stock_quantity " +
+        "SELECT item_id, product_name, stock_quantity " +
         "FROM products " + 
         "WHERE stock_quantity < 10",
         (err, res) => {
             if (err) throw err;
             let table = new Table({
-                head: ["ID", "Name", "Price", "Quantity"],
-                colWidths: [10, 30, 10, 10]
+                head: ["ID", "Name", "Quantity"],
+                colWidths: [10, 30, 10]
             });
             res.forEach(record => {
                 let currentItem = [record.item_id,
                     record.product_name,
-                    record.price,
                     record.stock_quantity
                 ];
                 table.push(currentItem);
@@ -112,12 +112,9 @@ function addInventory() {
         (err, res) => {
             if (err) throw err;
             let itemList = [];
-            console.log(res[0].item_id);
-            console.log(res[0].product_name);
             res.forEach(record => {
                 itemList.push(record.product_name);
             })
-            console.log(itemList);
             inquirer.prompt({
                 type: "list",
                 name: "itemChoice",
@@ -170,9 +167,9 @@ function addNewProd() {
     }]).then(answer => {
         connection.query(
             "INSERT INTO products " + 
-            "(product_name, department, price, stock_quantity) " + 
-            "VALUES (?, ?, ?, ?)",
-            [answer.newName, answer.newDept, answer.newPrice, answer.newQuan],
+            "(product_name, department, price, stock_quantity, product_sales) " + 
+            "VALUES (?, ?, ?, ?, ?)",
+            [answer.newName, answer.newDept, answer.newPrice, answer.newQuan, 0],
             (err) => {
                 if (err) throw err;
                 console.log("\nItem successfully added to database.");
